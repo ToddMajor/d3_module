@@ -49,12 +49,14 @@ function generateParameters(){
 		click_url: //this is a callback function to go to a hyperlink by clicking on data in the chart
 
 		//As a good scientist and engineer, an xLabel should always be defined
+		xLabel: //text on xAxis
 		if (typeof xLabel != 'undefined') }
 			xLabelTransform_y: //y height of label
 			xLabelTransform_dy: //to move the label up and down a little
 		}
 
 		//As a good scientist and engineer, a yLabel should always be defined
+		yLabel: //text on yAxis
 		if (typeof xLabel != 'undefined') {
 			yLabelTransform_x: //x axis offset of yLabel
 			yLabelTransform_dx: //subtle offset of yLabel
