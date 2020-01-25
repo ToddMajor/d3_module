@@ -1,0 +1,94 @@
+//there would be the PHP query here.
+//I included the bottom half to show that a multi-dimensional array must be built:
+//$j refers to the curve number
+//$cnt is the data point
+//xValue and yValue are the x and y points
+
+  while ($temp_data = mysql_fetch_row($result)) {
+    $data_array[$j][$cnt]['xValue'] = $temp_data[0];
+    $data_array[$j][$cnt]['yValue'] = $temp_data[1];    
+    $cnt++;
+    }
+  }
+?>
+
+<div id="chart_area" style="display: inline-block"></div>
+<script src="/js/d3jsv4.js"></script>
+<script src="/js/d3_module.js"></script>
+
+<script>
+
+function generateParameters(){
+  var parameterObject = {
+    divName: '#chart_area',
+    chart_type: 'scatterplot',
+    backgroundcolor: 'Smokewhite',
+    data: <?php print json_encode($data_array, JSON_NUMERIC_CHECK); ?>,
+    margin: {top: 10, right: 150, bottom: 60, left: 80},
+    get width() {return 720 - this.margin.left - this.margin.right },
+    get height() {return 360 - this.margin.top - this.margin.bottom},
+    colorScale_domain: <?php print json_encode(array_keys($cell_array)); ?>,
+    get colorScale_range() {return d3.schemeCategory10.splice(0,this.legendKey.length)},
+    //click_url (note: function call)
+
+    xLabel: 'Voltage (V)',
+    xLabelTransform_y: 30,
+    xLabelTransform_dy: "0.4em",
+
+
+    yLabel: 'Current (A)',
+    get yLabelTransform_x() {return 0 - this.margin.left},
+    yLabelTransform_dx: "1.8em",
+    get yLabelTransform_y() {return 0 - (this.height / 2)},
+    yLabelTransform_dy: 0,
+
+    xAxisFontSize: "12px",
+    yAxisFontSize: "12px",
+    xAxisTransform_x: 0,
+    xAxisTransform_dx: -5,
+    xAxisTransform_y: 0,
+    xAxisTransform_dy: 0,
+
+    continuousLegend: 'no',
+    makeLegend: 'yes',
+    legendKey: <?php print json_encode($cell_array_test_cnt); ?>,
+    get legendRect_x() {return this.width + 0},
+    legendRect_y: 0,
+    legendRect_width: 12,
+    legendRect_height: 12,
+    get legendText_x() {return this.width + 18},
+    legendText_dx: 0,
+    legendText_y: 9,
+    legendText_dy: "0.0em",
+ 
+    tooltipText: d => d.xValue + " V, " + d.yValue + " A",
+    tooltip_x: 10,
+    tooltip_dx: 0,
+    tooltip_y: 0,
+    tooltip_dy: "1.2em",
+    tooltipFontSize: "18px",
+    xTooltipPos: 100,
+    yTooltipPos: 250,
+
+    xScale_time: 'no',
+    get flat_data() {return [].concat.apply([], this.data)},
+    xData: d => d.xValue,
+    yData: d => d.yValue,
+    get xScale_Domain() {return [document.getElementsByName("x_min")[0].value == "" ? 0 : parseFloat(document.getElementsByName("x_min")[0].value), 
+      document.getElementsByName("x_max")[0].value == "" ? d3.max(this.flat_data, d => d.xValue*1.05) : parseFloat(document.getElementsByName("x_max")[0].value) ]},
+    get yScale_Domain() {return [document.getElementsByName("y_min")[0].value == "" ? 0 : parseFloat(document.getElementsByName("y_min")[0].value), 
+      document.getElementsByName("y_max")[0].value == "" ? d3.max(this.flat_data, d => d.yValue*1.05) : parseFloat(document.getElementsByName("y_max")[0].value)]},
+    dotSize: <?php print json_encode($point_size); ?>
+    
+  }
+    console.log(parameterObject);
+    return parameterObject;
+}
+</script>
+
+
+
+<script>
+var request = generateParameters();
+render(request);
+</script>
