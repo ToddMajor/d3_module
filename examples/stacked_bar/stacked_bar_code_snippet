@@ -1,0 +1,81 @@
+<link rel="stylesheet" type="text/css" href="d3_module_css.css">
+<div id="chart_area"></div> 
+<script src="http://d3js.org/d3.v4.min.js"></script>
+<script src="d3_module.js"></script>
+
+/*
+Here, I would do either a MySQL query and use json_parse to make a JSON, or make it on my own.
+Code Omitted
+*/
+
+<script>
+
+function generateParameters(){
+	var parameterObject = {
+		divName: '#chart_area',
+		chart_type: 'stacked_bar',
+		backgroundcolor: 'Smokewhite',
+		data: <?php print "[". $json_str . "]" ?>, //For stacked bars I would build my own JSON object.
+		margin: {top: 10, right: 80, bottom: 180, left: 80},
+		get width() {return 720 - this.margin.left - this.margin.right },
+		get height() {return 600 - this.margin.top - this.margin.bottom},
+		get colorScale_domain() {return this.key_list},
+		colorScale_range: ["#FF3333","#00FF23","#7800FF","#7800FF"],
+		type: <?php print "'".$type."'"; ?>,
+		click_url: d => window.location.href = '', //code omitted
+
+		xLabel: "Route",
+		xLabelTransform_y: 150,
+		xLabelTransform_dy: "0.4em",
+		
+		yLabel: "Wafer/Cell Count",
+		get yLabelTransform_x() {return 0 - this.margin.left},
+		yLabelTransform_dx: "1.8em",
+		get yLabelTransform_y() {return 0 - (this.height / 2)},
+		yLabelTransform_dy: 0,
+
+		xAxisFontSize: "12px",
+		yAxisFontSize: "12px",
+		xAxisTransform_x: 0,
+		xAxisTransform_dx: -5,
+		xAxisTransform_y: 0,
+		xAxisTransform_dy: 0,
+		
+		makeLegend: 'yes',
+		get legendKey() {return this.key_list.slice(0,3)},
+		get legendRect_x() {return this.width + 0},
+		legendRect_y: 0,
+		legendRect_width: 12,
+		legendRect_height: 12,
+		get legendText_x() {return this.width + 18},
+		legendText_dx: 0,
+		legendText_y: 9,
+		legendText_dy: "0.0em",
+		
+
+		tooltipText: d => (d[1]-d[0]) + " Wafers at " ,
+		tooltip_x: 10,
+		tooltip_dx: 0,
+		tooltip_y: 0,
+		tooltip_dy: "1.2em",
+		tooltipFontSize: "12px",
+		xTooltipPos: "d3.mouse(this)[0] - 15",
+		yTooltipPos: "d3.mouse(this)[1] - 45",
+
+		key_list: ["Hold", "MoveIn", "Staged", "StartRequested"],
+		get stack() {return d3.stack().keys(this.key_list)},
+		get series() {return this.stack(this.data)},
+		barStack: "d.data.Step",
+		get xScale_Domain_bar() {return this.data.map(d => d.Route)},
+		get yScale_Domain() {return [0, d3.max(this.data, d => d.Total)]}
+	};
+		console.log(parameterObject);
+		return parameterObject;
+}
+</script>
+
+
+<script>
+request = generateParameters();
+render(request); //function call 
+</script>
