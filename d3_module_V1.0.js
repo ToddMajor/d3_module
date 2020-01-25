@@ -50,19 +50,19 @@ function generateParameters(){
 
 		//As a good scientist and engineer, an xLabel should always be defined
 		xLabel: //text on xAxis
-		if (typeof xLabel != 'undefined') }
+		//if (typeof xLabel != 'undefined') }
 			xLabelTransform_y: //y height of label
 			xLabelTransform_dy: //to move the label up and down a little
-		}
+		//}
 
 		//As a good scientist and engineer, a yLabel should always be defined
 		yLabel: //text on yAxis
-		if (typeof xLabel != 'undefined') {
+		//if (typeof xLabel != 'undefined') {
 			yLabelTransform_x: //x axis offset of yLabel
 			yLabelTransform_dx: //subtle offset of yLabel
 			yLabelTransform_y: //y axis offset of yLabel
 			yLabelTransform_dy: //subtle y axis offset of yLabel
-		}
+		//}
 
 		if (chart_type != 'map') {
 			xAxisFontSize: //self-explanatory
