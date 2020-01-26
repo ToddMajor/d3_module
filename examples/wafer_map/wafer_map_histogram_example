@@ -1,0 +1,122 @@
+<div id="chart_area" style="display: inline-block"></div>
+<div id="legend" style="display: inline-block"></div>
+<div id="hist" style="display: inline-block"></div>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="d3_module.js"></script>
+<script>
+
+//This first generate parameters is for the wafer map
+function generateParameters(){
+
+	var parameterObject = {
+		divName: "#chart_area",
+		backgroundcolor: "smokewhite",
+		chart_type: "map",
+		data: <?php print json_encode($data_array, JSON_NUMERIC_CHECK); ?>,
+		margin: {top: 100, right: 100, bottom: 100, left: 100}, // margins of the graph
+		get width() {return 1000 - this.margin.left - this.margin.right; },
+		get height() {return 1000 - this.margin.top - this.margin.bottom; },
+		get colorScale_domain() {return [d3.min(this.data, this.yData), d3.max(this.data, this.yData)]},
+		colorScale_range: ["red", "green"],		
+		xLabel: "",
+		yLabel: "",
+		tooltipText: d => "Cell: " + d.cell + ", Eff: " + d.eff + ", Jsc:" + d.jsc + ", Voc: " + d.voc + ", ff: " + d.ff,
+		tooltip_x: 10,
+	    tooltip_dx: 0,
+	    tooltip_y: 0,
+	    tooltip_dy: "1.2em",
+	    tooltipFontSize: "14px",
+	    xTooltipPos: "d3.mouse(this)[0] - 15", 
+	    yTooltipPos: "d3.mouse(this)[1] - 45",
+	    click_url: d => window.location.href = '../solartest/cell_summary_chart_d3.php?serial_cs=' + d.serial + '&tool=' + <?php print "'$tool'"; ?> ,
+		continuousLegend: "yes",
+		makeLegend: "no",
+		
+		substrateSize: 150,
+		get yScale_Domain() {return [0, this.substrateSize]; },
+		circle: "yes",
+		yData: d => d.stat	
+	};
+
+	return parameterObject;
+	
+}
+
+
+
+
+</script>
+
+
+
+<script>
+var request = generateParameters();
+render(request); //function call 
+</script>
+
+
+//This secopnd generate parameters is for the histogram
+<script>
+function generateParameters(){
+	var parameterObject = {
+		divName: "#hist",
+		chart_type: "histogram",
+		data: <?php print json_encode($data_array, JSON_NUMERIC_CHECK); ?>,
+		margin: {top: 40, right: 40, bottom: 65, left: 65},
+		get width() {return 550 - this.margin.left - this.margin.right},
+		get height() {return 550 - this.margin.top - this.margin.bottom},
+		colorScale_domain: 1,
+		colorScale_range: d3.schemeCategory10.splice(0,1),
+
+		xLabel: "<?php print $stat; ?>",
+		xLabelTransform_y: 0,
+		xLabelTransform_dy: "0.4em",
+
+		yLabel: "Count of devices per bin",
+		get yLabelTransform_x() {return 0 - this.margin.left},
+		yLabelTransform_dx: "1.8em",
+		get yLabelTransform_y() {return 0 - (this.height / 2)},
+		yLabelTransform_dy: 0,
+
+		xAxisFontSize: "12px",
+		yAxisFontSize: "12px",
+		xAxisTransform_x: 0,
+		xAxisTransform_dx: -5,
+		xAxisTransform_y: 0,
+		xAxisTransform_dy: 0,
+ 
+		continuousLegend: 'no',
+		makeLegend: 'no',
+
+		tooltipText: d => d.length + " Cell(s) between " + d.x0 + " and " + d.x1,
+		tooltip_x: 10,
+		tooltip_dx: 0,
+		tooltip_y: 0,
+		tooltip_dy: "1.2em",
+		tooltipFontSize: "18px",
+		xTooltipPos: 60,
+		yTooltipPos: 475,
+			
+		num_bins: <?php print $num_bins; ?>,
+		plot_ll: <?php print $plot_ll; ?>,
+		plot_ul: <?php !(empty($plot_ul)) ? print $plot_ul : print "0" ; ?>,
+		get xScale_Domain() {
+			if (this.plot_ul != 0) {
+				return [this.plot_ll, this.plot_ul]
+			}
+			else {
+				return [this.plot_ll, d3.max(this.data, d => d.stat + 1)]
+			}
+		},
+		yData: d => d.stat
+
+
+	};
+	return parameterObject;
+		
+}
+
+var request2 = generateParameters();
+render(request2);
+</script>
